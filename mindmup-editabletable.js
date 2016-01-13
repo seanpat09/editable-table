@@ -16,7 +16,13 @@ $.fn.editableTableWidget = function (options) {
 				active = element.find('td:focus');
 				if (active.length) {
 					if(active.find(':input').length){
-						active.find(':input').focus();
+						active.find(':input').focus().blur( function(){} ).keydown(function (e) {
+							if (e.which === ENTER || e.which === ESC ) {
+								$(this).parent('td').focus();
+								e.preventDefault();
+								e.stopPropagation();
+							}
+						});
 					}else{
 						editor.val(active.text())
 							.removeClass('error')
@@ -115,13 +121,6 @@ $.fn.editableTableWidget = function (options) {
 		});
 
 		element.find('td').prop('tabindex', 1);
-		element.find('td > :input').blur( function(){} ).keydown(function (e) {
-			if (e.which === ENTER || e.which === ESC ) {
-				$(this).parent('td').focus();
-				e.preventDefault();
-				e.stopPropagation();
-			}
-		});
 
 		$(window).on('resize', function () {
 			if (editor.is(':visible')) {
